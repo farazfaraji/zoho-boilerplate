@@ -2,21 +2,20 @@ require('dotenv').config();
 const di = require("./di");
 // Loading requirements
 
-
 const createError = require('http-errors');
 const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
+const cors = require("cors");
+
 
 (async () => {
   console.log("Loading Requirements");
   try {
-    const DI = new di();
-
-    await DI.connectToRedis();
+    await di.connectToRedis();
     console.log("Requirements Loaded");
-
+    require("./systems/services")
   } catch (e) {
     console.error("Error: ", e);
   }

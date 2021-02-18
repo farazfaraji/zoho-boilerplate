@@ -1,5 +1,4 @@
 
-
 function load(router) {
 
     router.post('/api/test', async function (req, res, next) {

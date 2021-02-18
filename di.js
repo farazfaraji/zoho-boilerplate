@@ -1,16 +1,16 @@
 const Redis = require("async-redis");
-const zohoSystem = require("./systems/zoho_auth.system");
+const orchestlySystem = require("./systems/services/orchestly.service");
 
-class di {
+class DI {
     constructor(){
-        this.zoho = new zohoSystem(process.env.client_id,process.env.client_secret,process.env.refresh_token);
+        this.orchestly = new orchestlySystem(this,process.env.client_id,process.env.client_secret,process.env.refresh_token);
         this.redis = null;
     }
 
     async connectToRedis(){
-        this.redis = await Redis.createClient(`redis://${process.env.REDIS_HOST}:${process.env.REDIS_PORT}`);
-        await this.redis.get("TEST_VALUE");
+        this.redis = Redis.createClient(`redis://${process.env.REDIS_HOST}:${process.env.REDIS_PORT}`);
     }
 }
+let di = new DI();
 
 module.exports = di;
