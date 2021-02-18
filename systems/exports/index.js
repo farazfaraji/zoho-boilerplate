@@ -50,3 +50,4 @@ class Export {
     }
 }
 
+module.exports = Export;
