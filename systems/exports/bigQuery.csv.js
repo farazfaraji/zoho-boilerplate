@@ -56,12 +56,5 @@ class bigQueryClass extends CSV {
     }
 }
 
-async function test() {
-    const r = new bigQueryClass([{"SALAM": "dsa"}]);
-    await r.validate().save("test.csv");
-    const rs = await r.upload("5G_CDRS", "iran-numbers");
-    console.log(rs);
-}
 
-test();
 module.exports = bigQueryClass;
