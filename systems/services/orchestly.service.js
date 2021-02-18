@@ -20,6 +20,15 @@ class Orchestly extends ZohoAuth {
             console.error(e.response.data);
         }
     }
+
+    async getAllReport(org_id) {
+        try {
+            const response = await this.customRequest(`https://orchestlyapi.zoho.com/blueprint/api/${org_id}/reportfolder`,"GET");
+            return response.data;
+        } catch (e) {
+            console.error(e.response.data);
+        }
+    }
 }
 
 module.exports = Orchestly;
