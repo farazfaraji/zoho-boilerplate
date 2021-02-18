@@ -1,11 +1,6 @@
 const _ = require("lodash");
 const bigQuery = require("./bigQuery.csv");
 
-const a = {faraz: {data: {hello: "1"}}};
-
-const qq = _.at(a,['faraz']);
-console.log(qq);
-
 class Export {
     constructor(data) {
         this.bigQuery = new bigQuery();
@@ -53,10 +48,5 @@ class Export {
         }
         _.unset(this._preparedData,this._toRemove);
     }
-}
-
-async function test() {
-    const qq = new Export([{"salam":"test"},{"el":{"salasa":"21"}}]);
-    const r = await qq.need("[0].salam").toConsole();
 }
 
