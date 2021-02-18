@@ -10,6 +10,7 @@ class DI {
     async connectToRedis(){
         this.redis = Redis.createClient(`redis://${process.env.REDIS_HOST}:${process.env.REDIS_PORT}`);
     }
+
 }
 let di = new DI();
 

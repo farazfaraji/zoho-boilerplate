@@ -10,6 +10,11 @@ class ZohoAuthentication {
         this.refresh_token = _refresh_token;
         this.di = di;
     }
+
+    async removeToken(){
+        await this.di.redis.del("__zoho_token");
+    }
+
     async getToken() {
         await this.di.redis.del("__zoho_token");
         let token = await this.di.redis.get("__zoho_token");
@@ -46,7 +51,9 @@ class ZohoAuthentication {
         })
     }
 
-    async custumRequest(url, method, parameters) {
+    async customRequest(url, method, parameters) {
+        if(!["GET","POST","PUT"].includes(method))
+            throw new Error("method is not included");
         const token = await this.getToken();
         switch (method.toString().toUpperCase()) {
             case "POST": {
@@ -86,7 +93,7 @@ class ZohoAuthentication {
                         }
                     }
 
-                    const response = await axios.get(url + "?" +  params.join("&"),parameters, {
+                    const response = await axios.get(url + "?" +  params.join("&"), {
                         headers: {
                             'content-type': 'application/x-www-form-urlencoded',
                             'Authorization': `Zoho-oauthtoken ${token}`,
