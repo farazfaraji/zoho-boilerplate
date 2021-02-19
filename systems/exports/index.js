@@ -1,5 +1,5 @@
 const _ = require("lodash");
-const bigQuery = require("./bigQuery.csv");
+const bigQuery = require("./bigQuery.export");
 
 class Export {
     constructor(data) {
