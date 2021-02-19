@@ -1,9 +1,9 @@
 const _ = require("lodash");
-const bigQuery = require("./bigQuery.export");
+const _bigQuery = require("./bigQuery.export");
 
 class Export {
     constructor(data) {
-        this.bigQuery = new bigQuery();
+        this.bigQuery = new _bigQuery();
         this._rawData = data;
         this._preparedData = [];
         this._toRemove = [];
@@ -33,7 +33,11 @@ class Export {
         console.log(this._preparedData)
     }
 
-    async toBigQuery(projectName, tableName) {
+    async ObjectToBigQuery(projectName, tableName) {
+        await this.bigQuery.upload(projectName,tableName)
+    }
+
+    async CSVToBigQuery(path,projectName, tableName) {
 
     }
 
