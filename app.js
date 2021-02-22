@@ -16,10 +16,10 @@ const fs = require("fs");
   try {
     await di.connectToRedis();
     console.log("Requirements Loaded");
-    if(!fs.existsSync("src"))
-      fs.mkdirSync("src");
-    if(!fs.existsSync("src/index.js"))
-      fs.writeFileSync("src/index.js","");
+    if(!fs.existsSync(__dirname + "/src"))
+      fs.mkdirSync(__dirname + "/src");
+    if(!fs.existsSync(__dirname + "/src/index.js"))
+      fs.writeFileSync(__dirname + "/src/index.js","");
     require("./src/index");
     // require("./systems/services")
   } catch (e) {
