@@ -1,7 +1,7 @@
 const Report = require("./report.service");
 
 class Scheduler extends Report{
-    availablePeriod = ["EVERY_5", "EVERY_15","EVERY_30","EVERY_1"];
+    availablePeriod = ["EVERY_5", "EVERY_15","EVERY_30","EVERY_1","EVERY_60"];
 
     constructor(di,option) {
         super(option.report);
@@ -181,6 +181,9 @@ class Scheduler extends Report{
                 return 60*15*1000;
             case "EVERY_30":
                 return 60*30*1000;
+            case "EVERY_60":
+                return 60*60*1000;
+
         }
     }
 

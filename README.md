@@ -6,10 +6,10 @@ Using express to connecting to zoho, Handling routes and authentications.
 * Managing authentications
 * CURD data in Zoho CRM
 * Managing Zoho Orchestly
-* Exporting data to Zoho CRM by CSV
+* Exporting data to Zoho CRM to CSV
 * Export emails to Zoho CRM
 * Handling Webhooks
-* Handling CronJob
+* Handling Jobs
 
 ## Installation
 
@@ -18,17 +18,12 @@ Install NPM and NodeJs
 Installing Docker and Docker Compose (read the following article)
 > https://phoenixnap.com/kb/install-docker-compose-ubuntu
 
-```bash
-git clone git@github.com:farazfaraji/zoho-boilerplate
-cd zoho-boilerplate
-npm install
-```
-
 Clone Repository
 
 ```bash
 git clone git@github.com:farazfaraji/zoho-boilerplate
 cd zoho-boilerplate
+docker-compose up -d
 npm install
 ```
 
@@ -36,9 +31,9 @@ Edit .env file
 * Set application name
 * Set Redis port and host
 * Set email credential
-* Set CronJob info, acceptable values : [MONTHLY,DAILY,HOURLY,MINUTELY,EVERY5,EVERY10,EVERY15,EVERY30]
 * Set Zoho authentication information (or go to bottom of readme file)
     * https://www.zoho.com/crm/developer/docs/api/v2/oauth-overview.html
+* Set Report credentials
 
 ## Get zoho credential info
 * First Step , Replace expected values
@@ -61,5 +56,50 @@ client_id:1000.XXX
 client_secret:XXX
 redirect_uri:$redirect_uri
 grant_type:authorization_code
+```
+
+#How to use
+Create src folder in the root
+```
+mkdir src
+cd src
+touch index.js
+```
+Application will call index.js at the startup and your programs should write there.
+- What are inside the DI?
+    - di.orchestly -> to access to orchestly module
+    - di.scheduler -> to access to scheduler module
+    - di.redis -> to access to redis database
+    - di.ee -> to access to events
+    
+# How scheduler works?
+```
+vi src/index.js
+```
+```js
+const di = require("./../../di");
+await di.scheduler.addJob("SCHEDULER_NAME","EVENT_NAME",{"data":1},5000,"${ScheduleTable}",{sms:true});
+```
+#### ${ScheduleTable}
+
+You can manage schedule in 2 way,
+1) interval:
+    * EVERY_1
+    * EVERY_5
+    * EVERY_15
+    * EVERY_30
+    * EVERY_60
+2) exact date: (star means every)
+    * \*-\*-\*-01
+        * [0] : Month
+        * [1] : Day
+        * [2] : Hour
+        * [3] : Minute
+- For example if you want to run every day at 15:20: \*-\*-15-20'
+
+###::Important::
+After event emitted you should run:
+```
+    await di.scheduler.jobDone("SCHEDULER_NAME");
 ```
 
