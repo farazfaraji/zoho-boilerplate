@@ -26,7 +26,7 @@ class Orchestly extends ZohoAuth {
 
     async getAllReports(org_id) {
         try {
-            return await this.customRequest(`https://orchestlyapi.zoho.com/blueprint/api/${org_id}/reportfolder`, "GET");
+            return await this.customRequest(`https://orchestlyapi.zoho.com/blueprint/api/${org_id}/reports`, "GET");
         } catch (e) {
             if (e.response !== undefined)
                 console.error(e.response.data);

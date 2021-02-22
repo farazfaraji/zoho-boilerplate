@@ -3,7 +3,7 @@ const _bigQuery = require("./bigQuery.export");
 
 class Export {
     constructor(data) {
-        this.bigQuery = new _bigQuery();
+        this.bigQuery = new _bigQuery(data);
         this._rawData = data;
         this._preparedData = [];
         this._toRemove = [];
@@ -33,8 +33,16 @@ class Export {
         console.log(this._preparedData)
     }
 
-    async ObjectToBigQuery(projectName, tableName) {
-        await this.bigQuery.upload(projectName,tableName)
+    /**
+     *
+     * @param {String} projectName
+     * @param {String} tableName
+     * @param {String|"WRITE_TRUNCATE"|"WRITE_APPEND"} writeDisposition
+     * @returns {Promise<void>}
+     * @constructor
+     */
+    async ObjectToBigQuery(projectName, tableName,writeDisposition) {
+        await this.bigQuery.upload(projectName,tableName,writeDisposition)
     }
 
     async CSVToBigQuery(path,projectName, tableName) {

@@ -3,3 +3,4 @@ assets/docker
 .idea
 .env
 src
+src/

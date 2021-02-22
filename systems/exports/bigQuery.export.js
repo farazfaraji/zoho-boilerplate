@@ -18,9 +18,17 @@ class bigQueryClass extends CSV {
         return await data.getMetadata();
     }
 
-    async upload(dataset, table) {
+    /**
+     *
+     * @param {String} dataset
+     * @param {String} table
+     * @param {String|"WRITE_TRUNCATE"|"WRITE_APPEND"} writeDisposition
+     * @returns {Promise<void>}
+     */
+    async upload(dataset, table,writeDisposition) {
         const randomNumber = Math.floor(Math.random() * (1000000 - 1) + 1);
-        await this.validate().save("_temp_" + randomNumber);
+        const fileName = "_temp_" + randomNumber;
+        await this.validate().save(fileName);
         const firstKey = Object.keys(this._data[0]).length;
         const bigQueryMetadata = await this.getInfo(dataset, table);
 
@@ -31,9 +39,9 @@ class bigQueryClass extends CSV {
             sourceFormat: 'CSV',
             skipLeadingRows: 1,
             autodetect: false,
-            writeDisposition: 'WRITE_APPEND'
+            writeDisposition: writeDisposition
         };
-        await this.bigQuery.dataset(dataset).table(table).load(filename, metadata);
+        await this.bigQuery.dataset(dataset).table(table).load(fileName, metadata);
         fs.unlinkSync("_temp_" + randomNumber);
     }
 
@@ -51,7 +59,9 @@ class bigQueryClass extends CSV {
             else
                 columns += fields[i] + " STRING,"
         }
-        let query = `CREATE TABLE ${dataset}.${tableName} (${columns} Partition_Date DATE) PARTITION BY Report_Date`;
+        columns = columns.slice(0, -1);
+
+        let query = `CREATE TABLE ${dataset}.${tableName} (${columns}) PARTITION BY Partition_Date`;
         await this.bigQuery.query(query);
     }
 }

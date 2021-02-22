@@ -16,9 +16,8 @@ class ZohoAuthentication {
     }
 
     async getToken() {
-        await this.di.redis.del("__zoho_token");
         let token = await this.di.redis.get("__zoho_token");
-        if(!token){
+        if(token === null || token === undefined){
             token = await this.generateToken();
             token = token.access_token;
             await this.di.redis.set("__zoho_token",token,"EX","3500")
