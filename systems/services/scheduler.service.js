@@ -13,13 +13,13 @@ class Scheduler extends Report{
         }, 1000 * 60);
     }
 
-    async addJob(jobName, eventName, timeout, period,reportOption) {
+    async addJob(jobName, eventName,data, timeout, period,reportOption) {
         this._checkPeriod(period);
         const jobs = await this.getJobs();
         if(jobs.includes(jobName))
             throw new Error("job name " + jobName + " already exist");
         jobs.push(jobName);
-        const jobDetail = {jobName,eventName,timeout,period,lastRun:null,reportOption};
+        const jobDetail = {jobName,eventName,timeout,period,data,lastRun:null,reportOption};
         await this._di.redis.set("__system_job_" + jobName,JSON.stringify(jobDetail));
         await this._di.redis.set("__system_jobsList",JSON.stringify(jobs));
     }
@@ -39,7 +39,7 @@ class Scheduler extends Report{
         logs.data.push([{title:"Is time to run",data:isTimeToRunStatus}]);
 
         if(isTimeToRunStatus){
-            await this._call(jobInfo.eventName);
+            await this._call(jobInfo.eventName,jobInfo.data);
             await this._di.redis.set("__system_job__OnProcess_" +jobInfo.eventName ,1,"EX",jobInfo.timeout);
         }
         console.log(JSON.stringify(logs, null, 4));
@@ -80,8 +80,8 @@ class Scheduler extends Report{
         await this._di.redis.set("__system_jobsList",JSON.stringify(jobs));
     }
 
-    async _call(eventName){
-        console.log("CALL " + eventName);
+    async _call(eventName,data){
+        this._di.ee.emit(eventName, JSON.stringify(data));
     }
 
     async _isTimeToRun(lastRun,period,eventName){
