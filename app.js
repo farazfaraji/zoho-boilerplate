@@ -1,4 +1,4 @@
-require('dotenv').config();
+require('dotenv').config({ path: __dirname + "/.env" });
 const di = require("./di");
 // Loading requirements
 
@@ -8,6 +8,7 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const cors = require("cors");
+const fs = require("fs");
 
 
 (async () => {
@@ -15,7 +16,12 @@ const cors = require("cors");
   try {
     await di.connectToRedis();
     console.log("Requirements Loaded");
-    require("./systems/services")
+    if(!fs.existsSync("src"))
+      fs.mkdirSync("src");
+    if(!fs.existsSync("src/index.js"))
+      fs.writeFileSync("src/index.js","");
+    require("./src/index");
+    // require("./systems/services")
   } catch (e) {
     console.error("Error: ", e);
   }
