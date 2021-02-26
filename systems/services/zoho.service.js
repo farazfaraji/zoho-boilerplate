@@ -10,7 +10,10 @@ class Zoho extends ZohoAuth {
 
     async search(moduleName, criteria) {
         try {
-            return await this.customRequest(`https://www.zohoapis.com/crm/v2/${moduleName}/search?criteria=${criteria}`, "GET",data);
+            const parameter = {
+                criteria
+            };
+            return await this.customRequest(`https://www.zohoapis.com/crm/v2/${moduleName}/search`, "GET",parameter);
         }catch (e) {
             console.error(e);
         }
