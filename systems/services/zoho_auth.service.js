@@ -12,15 +12,15 @@ class ZohoAuthentication {
     }
 
     async removeToken(){
-        await this.di.redis.del("__zoho_token");
+        await this.di.redis.del("__zoho_token" + process.env.APP_NAME);
     }
 
     async getToken() {
-        let token = await this.di.redis.get("__zoho_token");
+        let token = await this.di.redis.get("__zoho_token" + process.env.APP_NAME );
         if(token === null || token === undefined){
             token = await this.generateToken();
             token = token.access_token;
-            await this.di.redis.set("__zoho_token",token,"EX","3500")
+            await this.di.redis.set("__zoho_token" + process.env.APP_NAME,token,"EX","3500")
         }
         return token;
     }

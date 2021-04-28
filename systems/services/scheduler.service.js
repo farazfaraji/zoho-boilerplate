@@ -7,10 +7,7 @@ class Scheduler extends Report{
         super(option.report);
         this._di = di;
         this._option = option;
-        const process = this.startProcess;
-        setInterval(async function () {
-            await process;
-        }, 1000 * 60);
+        setTimeout(()=>this.startProcess(), 1000 * 2 );
     }
 
     async addJob(jobName, eventName,data, timeout, period,reportOption) {
@@ -58,7 +55,7 @@ class Scheduler extends Report{
     }
 
     async jobDone(jobName){
-        const now = new Date().getTime();
+        const now = new Date();
         let jobInfo = JSON.parse(await this._di.redis.get("__system_job_" + jobName));
         jobInfo.lastRun = now;
         await this._di.redis.set("__system_job_" + jobName,JSON.stringify(jobInfo));
@@ -107,15 +104,18 @@ class Scheduler extends Report{
             const minute = new Date().getMinutes();
 
             let date = new Date().getFullYear() + "-";
+            let determine = [];
 
             if(interval[0]==="*"){
-                    date += this._fixDTlength(month) ;
+                    date += this._fixDTlength(month);
+                    determine.push("M");
             }
             else
                 date += this._fixDTlength(interval[0]);
             date += "-";
 
             if(interval[1]==="*"){
+                determine.push("D");
                     date += this._fixDTlength(day);
             }
             else
@@ -123,14 +123,16 @@ class Scheduler extends Report{
             date += "T";
 
             if(interval[2]==="*"){
-                    date += this._fixDTlength(hour);
+                determine.push("H");
+                date += this._fixDTlength(hour);
             }
             else
                 date += this._fixDTlength(interval[2]);
             date += ":";
 
             if(interval[3]==="*"){
-                    date += this._fixDTlength(minute);
+                determine.push("m");
+                date += this._fixDTlength(minute);
             }
             else
                 date += this._fixDTlength(interval[3]);
@@ -138,7 +140,38 @@ class Scheduler extends Report{
             date = new Date(date);
             if(date <= new Date()){
                 const now = new Date().getTime();
-                if((lastRun - now)>0)
+                const determineNextTime = new Date();
+
+                for(let i = 0;i<determine.length;i++){
+                    switch (determine[i]) {
+                        case "M":
+                        {
+                            determineNextTime.setMonth(determineNextTime.getMonth() + 1);
+                            break;
+                        }
+                        case "D":
+                        {
+                            determineNextTime.setDate(determineNextTime.getDate() + 1);
+                            break;
+                        }
+                        case "H":
+                        {
+                            determineNextTime.setHours(determineNextTime.getHours() + 1);
+                            break;
+                        }
+                        case "m":
+                        {
+                            determineNextTime.setMinutes(determineNextTime.getMinutes() + 1);
+                            break;
+                        }
+                    }
+                }
+
+                if(lastRun===null)
+                    lastRun = "1990-01-01T00:00:00";
+                lastRun = new Date(lastRun);
+return false;
+                if((lastRun >= determineNextTime) || (lastRun <= new Date()))
                     return true;
                 else
                     return false;
